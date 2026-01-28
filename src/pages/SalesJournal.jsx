@@ -12,35 +12,41 @@ function getProducts() {
 }
 
 const selectStyles = {
-  control: (base) => ({
+  control: (base, state) => ({
     ...base,
-    background: "#1a1a1a",
-    borderColor: "#444",
-    color: "#fff",
+    background: "#fff",
+    borderColor: state.isFocused ? "#111827" : "#d1d5db",
+    boxShadow: "none",
+    color: "#111827",
     minWidth: 340,
+    borderRadius: 0,
+    "&:hover": { borderColor: "#111827" },
   }),
   menu: (base) => ({
     ...base,
-    background: "#1e1e1e",
-    border: "1px solid #444",
+    background: "#fff",
+    border: "1px solid #d1d5db",
+    borderRadius: 0,
+    boxShadow: "none",
+    marginTop: 0,
   }),
   option: (base, state) => ({
     ...base,
-    background: state.isFocused ? "#2a2a3a" : "transparent",
-    color: "#fff",
+    background: state.isFocused ? "#f3f4f6" : "transparent",
+    color: "#374151",
     cursor: "pointer",
   }),
   singleValue: (base) => ({
     ...base,
-    color: "#fff",
+    color: "#111827",
   }),
   input: (base) => ({
     ...base,
-    color: "#fff",
+    color: "#111827",
   }),
   placeholder: (base) => ({
     ...base,
-    color: "#888",
+    color: "#9ca3af",
   }),
 };
 
@@ -193,15 +199,6 @@ function SalesJournal() {
           />
         </div>
 
-        {/* Selected product details */}
-        {product && (
-          <div className="product-detail">
-            <span><b>Category:</b> {product.category.replace(/_/g, " ")}</span>
-            <span><b>Unit Price:</b> ฿{product.unitPrice}</span>
-            <span><b>In Stock:</b> {product.inventory}</span>
-          </div>
-        )}
-
         {/* Inline new-product form */}
         {showNewForm && (
           <div className="new-product-form">
@@ -270,30 +267,56 @@ function SalesJournal() {
           </div>
         )}
 
-        <div>
-          <label>Quantity: </label>
-          <input
-            type="number"
-            min="1"
-            value={quantity}
-            onChange={(e) => setQuantity(Number(e.target.value))}
-          />
+        {/* Product info + sale entry side by side */}
+        <div className="sale-row">
+          {product && (
+            <div className="product-detail">
+              <div className="product-detail-item">
+                <span className="detail-label">Category</span>
+                <span className="detail-value">{product.category.replace(/_/g, " ")}</span>
+              </div>
+              <div className="product-detail-item">
+                <span className="detail-label">Unit Price</span>
+                <span className="detail-value">฿{product.unitPrice}</span>
+              </div>
+              <div className="product-detail-item">
+                <span className="detail-label">In Stock</span>
+                <span className="detail-value">{product.inventory}</span>
+              </div>
+            </div>
+          )}
+
+          <div className="sale-entry">
+            <div className="sale-entry-fields">
+              <div className="sale-field">
+                <label>Quantity</label>
+                <input
+                  type="number"
+                  min="1"
+                  value={quantity}
+                  onChange={(e) => setQuantity(Number(e.target.value))}
+                />
+              </div>
+              <div className="sale-field">
+                <label>Date</label>
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="sale-entry-footer">
+              <div className="sale-total">
+                <span className="sale-total-label">Total</span>
+                <span className="sale-total-value">฿{totalPrice.toLocaleString()}</span>
+              </div>
+              <button className="btn-add-sale" onClick={handleAddSale}>
+                Add Sale
+              </button>
+            </div>
+          </div>
         </div>
-
-        <div>
-          <label>Date: </label>
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
-        </div>
-
-        <p>
-          <b>Total Price:</b> ฿{totalPrice}
-        </p>
-
-        <button onClick={handleAddSale}>Add Sale</button>
       </div>
 
       {/* Table */}
