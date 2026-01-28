@@ -72,13 +72,20 @@ function SalesJournal() {
 
   const { theme } = useTheme();
 
+  const [selectStyles, setSelectStyles] = useState(() => getSelectStyles());
+
   useEffect(() => {
     setProducts(getProducts());
     const savedSales = JSON.parse(localStorage.getItem("sales")) || [];
     setSales(savedSales);
   }, []);
 
-  const selectStyles = useMemo(() => getSelectStyles(), [theme]);
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setSelectStyles(getSelectStyles());
+    }, 0);
+    return () => clearTimeout(timeout);
+  }, [theme]);
 
   const categories = useMemo(
     () => [...new Set(products.map((p) => p.category))],
