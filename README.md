@@ -17,9 +17,9 @@ The application uses LocalStorage to store sales data and does not use any backe
 (Add screenshots here)
 
 ## Group Members
-- Your Name
-- Member Name
+- Kyaw Zeyar Hein 6632106
+- Min Khaung Kyaw Swar 6712164
 - Member Name
 
 ## Deployment
-GitHub Pages link: (will be added after deployment)
+GitHub Pages link: 
