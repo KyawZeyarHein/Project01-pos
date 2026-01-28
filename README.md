@@ -17,9 +17,8 @@ The application uses LocalStorage to store sales data and does not use any backe
 (Add screenshots here)
 
 ## Group Members
-- Kyaw Zeyar Hein 6632106
-- Min Khaung Kyaw Swar 6712164
-- Member Name
+- Kyaw Zeyar Hein
+- Min Khaung Kyaw Swar
 
 ## Deployment
-GitHub Pages link: 
+GitHub Pages link: https://kyawzeyarhein.github.io/pos-project01/

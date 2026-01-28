@@ -162,9 +162,7 @@ export default function Dashboard() {
         <h2>Dashboard</h2>
         <div className="dashboard-subtitle">Overview of your sales performance</div>
       </div>
-
-      {/* Row 1: KPI cards + Sales by Category pie chart */}
-      <div className="charts-grid">
+      <div className="charts-grid charts-grid--overview">
         <div className="dashboard-panel">
           <div className="panel-header">
             <h3>Sales Overview</h3>
@@ -204,21 +202,32 @@ export default function Dashboard() {
                   outerRadius={90}
                   innerRadius={55}
                   paddingAngle={2}
+                  cornerRadius={4}
+                  startAngle={90}
+                  endAngle={-270}
+                  animationDuration={800}
+                  animationEasing="ease-out"
+                  label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+                  labelLine={false}
                 >
                   {pieData.map((_, i) => (
                     <Cell key={i} fill={COLORS[i % COLORS.length]} />
                   ))}
                 </Pie>
                 <Tooltip content={<PieTooltip />} />
-                <Legend formatter={(value) => formatCategory(value)} />
+                <Legend
+                  formatter={(value) => formatCategory(value)}
+                  layout="vertical"
+                  align="right"
+                  verticalAlign="middle"
+                  iconType="circle"
+                />
               </PieChart>
             </ResponsiveContainer>
           </div>
         </div>
       </div>
-
-      {/* Row 2: Sales by Product + Top 5 Products */}
-      <div className="charts-grid">
+      <div className="charts-grid middle">
         <div className="dashboard-panel">
           <div className="panel-header">
             <h3>Sales by Product</h3>
@@ -291,8 +300,6 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-
-      {/* Row 3: Sales Trend + Sales Summary (last) */}
       <div className="charts-grid">
         <div className="dashboard-panel">
           <div className="panel-header">
@@ -360,7 +367,7 @@ export default function Dashboard() {
                     <th>Period</th>
                     <th>Revenue (฿)</th>
                     <th>Qty</th>
-                    <th>Txns</th>
+                    <th>Count</th>
                   </tr>
                 </thead>
                 <tbody>
