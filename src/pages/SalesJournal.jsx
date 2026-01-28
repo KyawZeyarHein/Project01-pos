@@ -325,7 +325,7 @@ function SalesJournal() {
 
       {/* Table */}
       <h3>All Transactions</h3>
-      <table border="1" cellPadding="8">
+      <table className="transactions-table">
         <thead>
           <tr>
             <th>Date</th>

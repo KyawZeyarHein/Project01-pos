@@ -161,6 +161,14 @@
   border-bottom: 1px solid var(--border-light);
 }
 
+.summary-table th {
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  z-index: 1;
+  border-bottom: 1px solid var(--border);
+}
+
 .summary-table tr:last-child td {
   border-bottom: none;
 }
@@ -184,6 +192,14 @@
 .top5-table th,
 .top5-table td {
   border-bottom: 1px solid var(--border-light);
+}
+
+.top5-table th {
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  z-index: 1;
+  border-bottom: 1px solid var(--border);
 }
 
 .top5-table tr:last-child td {
