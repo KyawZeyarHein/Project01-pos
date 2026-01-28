@@ -1,6 +1,20 @@
 import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import productsJson from "../data/pos_item.json";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
+} from "recharts";
+
 
 function getProducts() {
   const stored = localStorage.getItem("products");
@@ -23,42 +37,48 @@ const seedSales = [
 ];
 
 function getSales() {
-  if (localStorage.getItem("sales") === null) {
+  const stored = localStorage.getItem("sales");
+  if (!stored) {
     localStorage.setItem("sales", JSON.stringify(seedSales));
     return seedSales;
   }
-  return JSON.parse(localStorage.getItem("sales")) || [];
+  return JSON.parse(stored);
 }
+
 
 function startOfWeek(dateStr) {
   const d = new Date(dateStr);
   const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Monday start
-  const monday = new Date(d.setDate(diff));
-  return monday.toISOString().slice(0, 10);
-}
-
-function formatMonth(dateStr) {
-  return dateStr.slice(0, 7); // YYYY-MM
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  return new Date(d.setDate(diff)).toISOString().slice(0, 10);
 }
 
 function groupSales(sales, mode) {
   const groups = {};
-  for (const sale of sales) {
-    let key;
-    if (mode === "daily") key = sale.date;
-    else if (mode === "weekly") key = startOfWeek(sale.date);
-    else key = formatMonth(sale.date);
+  sales.forEach((s) => {
+    const key =
+      mode === "daily"
+        ? s.date
+        : mode === "weekly"
+        ? startOfWeek(s.date)
+        : s.date.slice(0, 7);
 
-    if (!groups[key]) groups[key] = { period: key, totalSales: 0, totalQty: 0, count: 0 };
-    groups[key].totalSales += sale.totalPrice;
-    groups[key].totalQty += sale.quantity;
+    if (!groups[key]) {
+      groups[key] = { period: key, totalSales: 0, totalQty: 0, count: 0 };
+    }
+
+    groups[key].totalSales += s.totalPrice;
+    groups[key].totalQty += s.quantity;
     groups[key].count += 1;
-  }
-  return Object.values(groups).sort((a, b) => b.period.localeCompare(a.period));
+  });
+
+  return Object.values(groups).sort((a, b) =>
+    a.period.localeCompare(b.period)
+  );
 }
 
-function Dashboard() {
+
+export default function Dashboard() {
   const [sales, setSales] = useState([]);
   const [mode, setMode] = useState("daily");
 
@@ -67,153 +87,98 @@ function Dashboard() {
     setSales(getSales());
   }, []);
 
-  const allTimeTotal = useMemo(
-    () => sales.reduce((sum, s) => sum + s.totalPrice, 0),
-    [sales]
-  );
-
-  const allTimeQty = useMemo(
-    () => sales.reduce((sum, s) => sum + s.quantity, 0),
-    [sales]
-  );
-
   const grouped = useMemo(() => groupSales(sales, mode), [sales, mode]);
 
-  const modeLabel = mode === "daily" ? "Day" : mode === "weekly" ? "Week Starting" : "Month";
+  const allTimeRevenue = sales.reduce((sum, s) => sum + s.totalPrice, 0);
+  const allTimeQty = sales.reduce((sum, s) => sum + s.quantity, 0);
 
+ 
   const salesByProduct = {};
-
-sales.forEach((sale) => {
-  if (!salesByProduct[sale.itemName]) {
-    salesByProduct[sale.itemName] = {
-      itemName: sale.itemName,
-      quantity: 0,
-      total: 0,
-    };
-  }
-
-  salesByProduct[sale.itemName].quantity += sale.quantity;
-  salesByProduct[sale.itemName].total += sale.totalPrice;
-});
+  sales.forEach((s) => {
+    if (!salesByProduct[s.itemName]) {
+      salesByProduct[s.itemName] = { itemName: s.itemName, quantity: 0, total: 0 };
+    }
+    salesByProduct[s.itemName].quantity += s.quantity;
+    salesByProduct[s.itemName].total += s.totalPrice;
+  });
 
   const top5Products = Object.values(salesByProduct)
     .sort((a, b) => b.quantity - a.quantity)
     .slice(0, 5);
 
+  const pieData = Object.values(
+    sales.reduce((acc, s) => {
+      acc[s.category] = acc[s.category] || { name: s.category, value: 0 };
+      acc[s.category].value += s.totalPrice;
+      return acc;
+    }, {})
+  );
+
+  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#AA66CC"];
+
   return (
-  <div className="container">
-    <h2>Dashboard</h2>
+    <div className="container">
+      <h2>Dashboard</h2>
 
-    <nav className="nav-links">
       <Link to="/sales-journal">Go to Sales Journal</Link>
-    </nav>
 
-    {/* All-time totals */}
-    <div className="summary-cards">
-      <div className="card">
-        <div className="card-label">Total Revenue (All Time)</div>
-        <div className="card-value">฿{allTimeTotal.toLocaleString()}</div>
-      </div>
-      <div className="card">
-        <div className="card-label">Total Transactions</div>
-        <div className="card-value">{sales.length}</div>
-      </div>
-      <div className="card">
-        <div className="card-label">Total Items Sold</div>
-        <div className="card-value">{allTimeQty.toLocaleString()}</div>
-      </div>
-    </div>
 
-    {/* Period summary */}
-    <div className="period-section">
-      <h3>Sales Summary by Period</h3>
-
-      <div className="period-selector">
-        {["daily", "weekly", "monthly"].map((m) => (
-          <button
-            key={m}
-            className={mode === m ? "active" : ""}
-            onClick={() => setMode(m)}
-          >
-            {m.charAt(0).toUpperCase() + m.slice(1)}
-          </button>
-        ))}
+      <div className="summary-cards">
+        <div className="card">Revenue: ฿{allTimeRevenue.toLocaleString()}</div>
+        <div className="card">Transactions: {sales.length}</div>
+        <div className="card">Items Sold: {allTimeQty}</div>
       </div>
 
-      {grouped.length === 0 ? (
-        <p>No sales recorded yet.</p>
-      ) : (
-        <table border="1" cellPadding="8">
-          <thead>
-            <tr>
-              <th>{modeLabel}</th>
-              <th>Transactions</th>
-              <th>Items Sold</th>
-              <th>Total Revenue</th>
-            </tr>
-          </thead>
-          <tbody>
-            {grouped.map((g) => (
-              <tr key={g.period}>
-                <td>{g.period}</td>
-                <td>{g.count}</td>
-                <td>{g.totalQty}</td>
-                <td>฿{g.totalSales.toLocaleString()}</td>
-              </tr>
+      {["daily", "weekly", "monthly"].map((m) => (
+        <button key={m} onClick={() => setMode(m)} className={mode === m ? "active" : ""}>
+          {m}
+        </button>
+      ))}
+
+      <h3>Sales Trend</h3>
+      <ResponsiveContainer width="100%" height={300}>
+        <LineChart data={grouped}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="period" />
+          <YAxis />
+          <Tooltip />
+          <Line type="monotone" dataKey="totalSales" stroke="#007bff" />
+        </LineChart>
+      </ResponsiveContainer>
+
+      <h3>Sales by Category</h3>
+      <ResponsiveContainer width="100%" height={300}>
+        <PieChart>
+          <Pie data={pieData} dataKey="value" nameKey="name" outerRadius={100} label>
+            {pieData.map((_, i) => (
+              <Cell key={i} fill={COLORS[i % COLORS.length]} />
             ))}
-          </tbody>
-        </table>
-      )}
+          </Pie>
+          <Legend />
+        </PieChart>
+      </ResponsiveContainer>
+
+      <h3>Top 5 Products</h3>
+      <table border="1" cellPadding="8">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Product</th>
+            <th>Qty</th>
+            <th>Total (฿)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {top5Products.map((p, i) => (
+            <tr key={i}>
+              <td>{i + 1}</td>
+              <td>{p.itemName}</td>
+              <td>{p.quantity}</td>
+              <td>{p.total.toLocaleString()}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
-
-    {/* Sales by Product */}
-    <h3>Sales by Product</h3>
-
-    <table border="1" cellPadding="8">
-      <thead>
-        <tr>
-          <th>Product</th>
-          <th>Total Quantity</th>
-          <th>Total Sales (฿)</th>
-        </tr>
-      </thead>
-      <tbody>
-        {Object.values(salesByProduct).map((p, index) => (
-          <tr key={index}>
-            <td>{p.itemName}</td>
-            <td>{p.quantity}</td>
-            <td>{p.total.toLocaleString()}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-
-    <h3>Top 5 Selling Items</h3>
-
-    <table border="1" cellPadding="8">
-      <thead>
-        <tr>
-          <th>Rank</th>
-          <th>Product</th>
-          <th>Quantity Sold</th>
-          <th>Total Sales (฿)</th>
-        </tr>
-      </thead>
-      <tbody>
-        {top5Products.map((p, index) => (
-          <tr key={index}>
-            <td>{index + 1}</td>
-            <td>{p.itemName}</td>
-            <td>{p.quantity}</td>
-            <td>{p.total.toLocaleString()}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-);
-
-
+  );
 }
-
-export default Dashboard;
