@@ -1,15 +1,23 @@
 import { useState, useEffect } from "react";
-import products from "../data/pos_item.json";
+import { Link } from "react-router-dom";
+import productsJson from "../data/pos_item.json";
 
+function getProducts() {
+  const stored = localStorage.getItem("products");
+  if (stored) return JSON.parse(stored);
+  localStorage.setItem("products", JSON.stringify(productsJson));
+  return productsJson;
+}
 
 function SalesJournal() {
+  const [products, setProducts] = useState([]);
   const [selectedItem, setSelectedItem] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [date, setDate] = useState("");
   const [sales, setSales] = useState([]);
 
-  // Load sales from LocalStorage
   useEffect(() => {
+    setProducts(getProducts());
     const savedSales = JSON.parse(localStorage.getItem("sales")) || [];
     setSales(savedSales);
   }, []);
@@ -45,6 +53,10 @@ function SalesJournal() {
   return (
     <div className="container">
       <h2>Sales Journal</h2>
+
+      <nav className="nav-links">
+        <Link to="/">Back to Dashboard</Link>
+      </nav>
 
       {/* Form */}
       <div style={{ marginBottom: "20px" }}>

@@ -1,10 +1,16 @@
+import { HashRouter, Routes, Route } from "react-router-dom";
+import Dashboard from "./pages/Dashboard";
 import SalesJournal from "./pages/SalesJournal";
+import "./App.css";
 
 function App() {
   return (
-    <div>
-      <SalesJournal />
-    </div>
+    <HashRouter>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/sales-journal" element={<SalesJournal />} />
+      </Routes>
+    </HashRouter>
   );
 }
 
