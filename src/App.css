@@ -20,6 +20,12 @@ button {
   cursor: pointer;
 }
 
+.btn-cancel {
+  background: #333 !important;
+  color: #ccc !important;
+}
+
+
 /* Navigation */
 .nav-links {
   margin-bottom: 20px;
@@ -34,6 +40,9 @@ button {
 .nav-links a:hover {
   text-decoration: underline;
 }
+
+
+/* ---------------------------------------- */
 
 /* Dashboard cards */
 .summary-cards {
@@ -63,6 +72,8 @@ button {
   font-weight: 700;
 }
 
+/* ---------------------------------------- */
+
 /* Period section */
 .period-section {
   margin-top: 10px;
@@ -89,9 +100,24 @@ button {
   border-color: #646cff;
 }
 
+/* ---------------------------------------- */
+
 .period-selector button:hover:not(.active) {
   border-color: #646cff;
 }
+
+.qty-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.stock-info {
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+/* ---------------------------------------- */
 
 /* New product inline form */
 .new-product-form {
@@ -139,11 +165,7 @@ button {
   cursor: pointer;
 }
 
-.btn-cancel {
-  background: #333 !important;
-  color: #ccc !important;
-}
-
+/* ---------------------------------------- */
 /* Tables */
 table {
   width: 100%;

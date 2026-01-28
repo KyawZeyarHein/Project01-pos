@@ -9,11 +9,27 @@ function getProducts() {
   return productsJson;
 }
 
+const seedSales = [
+  { itemName: "HB Pencil", category: "stationary", unitPrice: 5, quantity: 10, totalPrice: 50, date: "2026-01-05" },
+  { itemName: "Wireless Mouse", category: "small_it_gadgets", unitPrice: 249, quantity: 2, totalPrice: 498, date: "2026-01-07" },
+  { itemName: "Potato Chips Original 50g", category: "snacks", unitPrice: 25, quantity: 5, totalPrice: 125, date: "2026-01-07" },
+  { itemName: "Toothpaste 120g", category: "consumer_products", unitPrice: 45, quantity: 3, totalPrice: 135, date: "2026-01-10" },
+  { itemName: "Paracetamol 500mg 10 tablets", category: "simple_medicines", unitPrice: 35, quantity: 4, totalPrice: 140, date: "2026-01-12" },
+  { itemName: "Ballpoint Pen Blue", category: "stationary", unitPrice: 12, quantity: 20, totalPrice: 240, date: "2026-01-14" },
+  { itemName: "USB Flash Drive 32GB", category: "small_it_gadgets", unitPrice: 299, quantity: 1, totalPrice: 299, date: "2026-01-18" },
+  { itemName: "Chocolate Bar 45g", category: "snacks", unitPrice: 30, quantity: 8, totalPrice: 240, date: "2026-01-20" },
+  { itemName: "Shampoo 200ml", category: "consumer_products", unitPrice: 69, quantity: 2, totalPrice: 138, date: "2026-01-24" },
+  { itemName: "Cough Syrup 60ml", category: "simple_medicines", unitPrice: 45, quantity: 3, totalPrice: 135, date: "2026-01-27" },
+];
+
 function getSales() {
+  if (localStorage.getItem("sales") === null) {
+    localStorage.setItem("sales", JSON.stringify(seedSales));
+    return seedSales;
+  }
   return JSON.parse(localStorage.getItem("sales")) || [];
 }
 
-// Helpers
 function startOfWeek(dateStr) {
   const d = new Date(dateStr);
   const day = d.getDay();
@@ -47,7 +63,7 @@ function Dashboard() {
   const [mode, setMode] = useState("daily");
 
   useEffect(() => {
-    getProducts(); // ensure products are seeded
+    getProducts();
     setSales(getSales());
   }, []);
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import CreatableSelect from "react-select/creatable";
 import productsJson from "../data/pos_item.json";
@@ -9,14 +9,6 @@ function getProducts() {
   localStorage.setItem("products", JSON.stringify(productsJson));
   return productsJson;
 }
-
-const CATEGORIES = [
-  "stationary",
-  "small_it_gadgets",
-  "snacks",
-  "consumer_products",
-  "simple_medicines",
-];
 
 const selectStyles = {
   control: (base) => ({
@@ -58,12 +50,12 @@ function SalesJournal() {
   const [date, setDate] = useState("");
   const [sales, setSales] = useState([]);
 
-  // New product form
   const [pendingName, setPendingName] = useState("");
   const [showNewForm, setShowNewForm] = useState(false);
-  const [newCategory, setNewCategory] = useState(CATEGORIES[0]);
+  const [newCategory, setNewCategory] = useState("");
   const [newPrice, setNewPrice] = useState("");
   const [newDescription, setNewDescription] = useState("");
+  const [newInventory, setNewInventory] = useState("");
 
   useEffect(() => {
     setProducts(getProducts());
@@ -71,9 +63,14 @@ function SalesJournal() {
     setSales(savedSales);
   }, []);
 
+  const categories = useMemo(
+    () => [...new Set(products.map((p) => p.category))],
+    [products]
+  );
+
   const options = products.map((p) => ({
     value: p.itemName,
-    label: `${p.itemName}  —  ${p.category.replace(/_/g, " ")} · ฿${p.unitPrice}`,
+    label: `${p.itemName}  —  ${p.category.replace(/_/g, " ")} · ฿${p.unitPrice} · stock: ${p.inventory}`,
   }));
 
   const product = selectedOption
@@ -90,6 +87,7 @@ function SalesJournal() {
     setPendingName(inputValue);
     setShowNewForm(true);
     setSelectedOption(null);
+    setNewCategory(categories[0] || "");
   }
 
   function handleSaveNewProduct() {
@@ -103,7 +101,7 @@ function SalesJournal() {
       category: newCategory,
       description: newDescription,
       unitPrice: Number(newPrice),
-      inventory: 0,
+      inventory: Number(newInventory) || 0,
     };
 
     const updated = [...products, newProduct];
@@ -112,19 +110,27 @@ function SalesJournal() {
 
     setSelectedOption({
       value: newProduct.itemName,
-      label: `${newProduct.itemName}  —  ${newProduct.category.replace(/_/g, " ")} · ฿${newProduct.unitPrice}`,
+      label: `${newProduct.itemName}  —  ${newProduct.category.replace(/_/g, " ")} · ฿${newProduct.unitPrice} · stock: ${newProduct.inventory}`,
     });
 
     setShowNewForm(false);
     setPendingName("");
     setNewPrice("");
     setNewDescription("");
-    setNewCategory(CATEGORIES[0]);
+    setNewInventory("");
+    setNewCategory(categories[0] || "");
   }
 
   const handleAddSale = () => {
     if (!product || !date) {
       alert("Please select a product and date");
+      return;
+    }
+
+    if (quantity > product.inventory) {
+      alert(
+        `Not enough inventory. "${product.itemName}" only has ${product.inventory} in stock.`
+      );
       return;
     }
 
@@ -140,6 +146,14 @@ function SalesJournal() {
     const updatedSales = [...sales, newSale];
     setSales(updatedSales);
     localStorage.setItem("sales", JSON.stringify(updatedSales));
+
+    const updatedProducts = products.map((p) =>
+      p.itemName === product.itemName
+        ? { ...p, inventory: p.inventory - quantity }
+        : p
+    );
+    setProducts(updatedProducts);
+    localStorage.setItem("products", JSON.stringify(updatedProducts));
 
     setSelectedOption(null);
     setQuantity(1);
@@ -180,7 +194,7 @@ function SalesJournal() {
                 value={newCategory}
                 onChange={(e) => setNewCategory(e.target.value)}
               >
-                {CATEGORIES.map((c) => (
+                {categories.map((c) => (
                   <option key={c} value={c}>
                     {c.replace(/_/g, " ")}
                   </option>
@@ -194,6 +208,15 @@ function SalesJournal() {
                 min="0"
                 value={newPrice}
                 onChange={(e) => setNewPrice(e.target.value)}
+              />
+            </div>
+            <div>
+              <label>Inventory: </label>
+              <input
+                type="number"
+                min="0"
+                value={newInventory}
+                onChange={(e) => setNewInventory(e.target.value)}
               />
             </div>
             <div>
@@ -219,14 +242,21 @@ function SalesJournal() {
           </div>
         )}
 
-        <div>
-          <label>Quantity: </label>
-          <input
-            type="number"
-            min="1"
-            value={quantity}
-            onChange={(e) => setQuantity(Number(e.target.value))}
-          />
+        <div className="qty-row">
+          <div>
+            <label>Quantity: </label>
+            <input
+              type="number"
+              min="1"
+              value={quantity}
+              onChange={(e) => setQuantity(Number(e.target.value))}
+            />
+          </div>
+          {product && (
+            <span className="stock-info">
+              Available stock: {product.inventory}
+            </span>
+          )}
         </div>
 
         <div>
