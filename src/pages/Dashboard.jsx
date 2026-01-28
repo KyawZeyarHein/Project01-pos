@@ -1,9 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
 import productsJson from "../data/pos_item.json";
 import {
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -14,7 +13,7 @@ import {
   Cell,
   Legend,
 } from "recharts";
-
+import "./Dashboard.css";
 
 function getProducts() {
   const stored = localStorage.getItem("products");
@@ -44,7 +43,6 @@ function getSales() {
   }
   return JSON.parse(stored);
 }
-
 
 function startOfWeek(dateStr) {
   const d = new Date(dateStr);
@@ -77,6 +75,45 @@ function groupSales(sales, mode) {
   );
 }
 
+function formatCategory(name) {
+  return name
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function SalesTooltip({ active, payload, label }) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="custom-tooltip">
+      <div className="tooltip-label">{label}</div>
+      <div className="tooltip-value">฿{payload[0].value.toLocaleString()}</div>
+    </div>
+  );
+}
+
+function PieTooltip({ active, payload }) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="custom-tooltip">
+      <div className="tooltip-label">{formatCategory(payload[0].name)}</div>
+      <div className="tooltip-value">฿{payload[0].value.toLocaleString()}</div>
+    </div>
+  );
+}
+
+function DonutCenterLabel({ viewBox, total }) {
+  const { cx, cy } = viewBox;
+  return (
+    <g>
+      <text x={cx} y={cy - 8} textAnchor="middle" className="donut-center-label">
+        Total
+      </text>
+      <text x={cx} y={cy + 16} textAnchor="middle" className="donut-center-value">
+        ฿{total.toLocaleString()}
+      </text>
+    </g>
+  );
+}
 
 export default function Dashboard() {
   const [sales, setSales] = useState([]);
@@ -92,7 +129,6 @@ export default function Dashboard() {
   const allTimeRevenue = sales.reduce((sum, s) => sum + s.totalPrice, 0);
   const allTimeQty = sales.reduce((sum, s) => sum + s.quantity, 0);
 
- 
   const salesByProduct = {};
   sales.forEach((s) => {
     if (!salesByProduct[s.itemName]) {
@@ -106,6 +142,8 @@ export default function Dashboard() {
     .sort((a, b) => b.quantity - a.quantity)
     .slice(0, 5);
 
+  const maxQty = top5Products.length > 0 ? top5Products[0].quantity : 1;
+
   const pieData = Object.values(
     sales.reduce((acc, s) => {
       acc[s.category] = acc[s.category] || { name: s.category, value: 0 };
@@ -118,67 +156,184 @@ export default function Dashboard() {
 
   return (
     <div className="container">
-      <h2>Dashboard</h2>
-
-      <Link to="/sales-journal">Go to Sales Journal</Link>
-
-
-      <div className="summary-cards">
-        <div className="card">Revenue: ฿{allTimeRevenue.toLocaleString()}</div>
-        <div className="card">Transactions: {sales.length}</div>
-        <div className="card">Items Sold: {allTimeQty}</div>
+      <div className="dashboard-header">
+        <h2>Dashboard</h2>
+        <div className="dashboard-subtitle">Overview of your sales performance</div>
       </div>
 
-      {["daily", "weekly", "monthly"].map((m) => (
-        <button key={m} onClick={() => setMode(m)} className={mode === m ? "active" : ""}>
-          {m}
-        </button>
-      ))}
+      <div className="summary-cards">
+        <div className="kpi-card kpi-card--revenue">
+          <div className="card-label">Revenue</div>
+          <div className="card-value">฿{allTimeRevenue.toLocaleString()}</div>
+          <div className="card-subtitle">All time</div>
+        </div>
+        <div className="kpi-card kpi-card--transactions">
+          <div className="card-label">Transactions</div>
+          <div className="card-value">{sales.length}</div>
+          <div className="card-subtitle">All time</div>
+        </div>
+        <div className="kpi-card kpi-card--items">
+          <div className="card-label">Items Sold</div>
+          <div className="card-value">{allTimeQty}</div>
+          <div className="card-subtitle">All time</div>
+        </div>
+      </div>
 
-      <h3>Sales Trend</h3>
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={grouped}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="period" />
-          <YAxis />
-          <Tooltip />
-          <Line type="monotone" dataKey="totalSales" stroke="#007bff" />
-        </LineChart>
-      </ResponsiveContainer>
+      <div className="charts-grid">
+        <div className="dashboard-panel">
+          <div className="panel-header">
+            <h3>Sales Trend</h3>
+            <div className="period-selector">
+              {["daily", "weekly", "monthly"].map((m) => (
+                <button
+                  key={m}
+                  onClick={() => setMode(m)}
+                  className={mode === m ? "active" : ""}
+                >
+                  {m.charAt(0).toUpperCase() + m.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="panel-body">
+            <ResponsiveContainer width="100%" height={280}>
+              <AreaChart data={grouped}>
+                <defs>
+                  <linearGradient id="salesGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#2563eb" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#2563eb" stopOpacity={0.02} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="var(--border-light)"
+                  vertical={false}
+                />
+                <XAxis
+                  dataKey="period"
+                  tick={{ fontSize: 12, fill: "var(--text-muted)" }}
+                  axisLine={{ stroke: "var(--border-light)" }}
+                  tickLine={false}
+                />
+                <YAxis
+                  tick={{ fontSize: 12, fill: "var(--text-muted)" }}
+                  axisLine={false}
+                  tickLine={false}
+                  tickFormatter={(v) => `฿${v}`}
+                />
+                <Tooltip content={<SalesTooltip />} />
+                <Area
+                  type="monotone"
+                  dataKey="totalSales"
+                  stroke="#2563eb"
+                  strokeWidth={2}
+                  fill="url(#salesGradient)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
 
-      <h3>Sales by Category</h3>
-      <ResponsiveContainer width="100%" height={300}>
-        <PieChart>
-          <Pie data={pieData} dataKey="value" nameKey="name" outerRadius={100} label>
-            {pieData.map((_, i) => (
-              <Cell key={i} fill={COLORS[i % COLORS.length]} />
-            ))}
-          </Pie>
-          <Legend />
-        </PieChart>
-      </ResponsiveContainer>
+        <div className="dashboard-panel">
+          <div className="panel-header">
+            <h3>Sales Summary ({mode.charAt(0).toUpperCase() + mode.slice(1)})</h3>
+          </div>
+          <div className="panel-body" style={{ padding: 0 }}>
+            <div className="summary-table-wrap">
+              <table className="summary-table">
+                <thead>
+                  <tr>
+                    <th>Period</th>
+                    <th>Revenue (฿)</th>
+                    <th>Qty</th>
+                    <th>Txns</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {grouped.map((g) => (
+                    <tr key={g.period}>
+                      <td>{g.period}</td>
+                      <td>฿{g.totalSales.toLocaleString()}</td>
+                      <td>{g.totalQty}</td>
+                      <td>{g.count}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <h3>Top 5 Products</h3>
-      <table border="1" cellPadding="8">
-        <thead>
-          <tr>
-            <th>Rank</th>
-            <th>Product</th>
-            <th>Qty</th>
-            <th>Total (฿)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {top5Products.map((p, i) => (
-            <tr key={i}>
-              <td>{i + 1}</td>
-              <td>{p.itemName}</td>
-              <td>{p.quantity}</td>
-              <td>{p.total.toLocaleString()}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="charts-grid">
+        <div className="dashboard-panel">
+          <div className="panel-header">
+            <h3>Sales by Category</h3>
+          </div>
+          <div className="panel-body">
+            <ResponsiveContainer width="100%" height={280}>
+              <PieChart>
+                <Pie
+                  data={pieData}
+                  dataKey="value"
+                  nameKey="name"
+                  outerRadius={90}
+                  innerRadius={55}
+                  paddingAngle={2}
+                >
+                  {pieData.map((_, i) => (
+                    <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip content={<PieTooltip />} />
+                <Legend formatter={(value) => formatCategory(value)} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="dashboard-panel">
+          <div className="panel-header">
+            <h3>Top 5 Products</h3>
+          </div>
+          <div className="panel-body" style={{ padding: 0 }}>
+            <table className="top5-table">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Product</th>
+                  <th>Qty Sold</th>
+                  <th>Total (฿)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {top5Products.map((p, i) => (
+                  <tr key={i}>
+                    <td>
+                      <span className={`rank-badge rank-badge--${i + 1}`}>
+                        {i + 1}
+                      </span>
+                    </td>
+                    <td>{p.itemName}</td>
+                    <td>
+                      <div className="qty-bar-wrapper">
+                        <span className="qty-bar-value">{p.quantity}</span>
+                        <div className="qty-bar">
+                          <div
+                            className="qty-bar-fill"
+                            style={{ width: `${(p.quantity / maxQty) * 100}%` }}
+                          />
+                        </div>
+                      </div>
+                    </td>
+                    <td>฿{p.total.toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

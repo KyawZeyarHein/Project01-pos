@@ -2,19 +2,56 @@
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  color: #1a1a2e;
-  background-color: #f5f7fa;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --bg: #f5f7fa;
+  --surface: #ffffff;
+  --surface-alt: #f9fafb;
+  --surface-hover: #f3f4f6;
+  --text-primary: #111827;
+  --text-secondary: #374151;
+  --text-muted: #6b7280;
+  --text-placeholder: #9ca3af;
+  --border: #d1d5db;
+  --border-light: #e5e7eb;
+  --accent: #111827;
+  --accent-hover: #000000;
+  --accent-text: #ffffff;
+  --btn-cancel-bg: #e5e7eb;
+  --btn-cancel-bg-hover: #d1d5db;
+  --btn-cancel-text: #374151;
+  --btn-cancel-border: #d1d5db;
+}
+
+[data-theme="dark"] {
+  --bg: #0f1117;
+  --surface: #1a1d27;
+  --surface-alt: #151820;
+  --surface-hover: #252a3a;
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-placeholder: #64748b;
+  --border: #2d3348;
+  --border-light: #252a3a;
+  --accent: #e2e8f0;
+  --accent-hover: #f8fafc;
+  --accent-text: #0f1117;
+  --btn-cancel-bg: #252a3a;
+  --btn-cancel-bg-hover: #2d3348;
+  --btn-cancel-text: #cbd5e1;
+  --btn-cancel-border: #2d3348;
 }
 
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background-color: var(--bg);
+  color: var(--text-primary);
 }
 
 h1 {

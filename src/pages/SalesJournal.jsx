@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
 import CreatableSelect from "react-select/creatable";
+import { useTheme } from "../context/ThemeContext";
 import productsJson from "../data/pos_item.json";
 import "./SalesJournal.css";
 
@@ -11,44 +11,48 @@ function getProducts() {
   return productsJson;
 }
 
-const selectStyles = {
-  control: (base, state) => ({
-    ...base,
-    background: "#fff",
-    borderColor: state.isFocused ? "#111827" : "#d1d5db",
-    boxShadow: "none",
-    color: "#111827",
-    minWidth: 340,
-    borderRadius: 0,
-    "&:hover": { borderColor: "#111827" },
-  }),
-  menu: (base) => ({
-    ...base,
-    background: "#fff",
-    border: "1px solid #d1d5db",
-    borderRadius: 0,
-    boxShadow: "none",
-    marginTop: 0,
-  }),
-  option: (base, state) => ({
-    ...base,
-    background: state.isFocused ? "#f3f4f6" : "transparent",
-    color: "#374151",
-    cursor: "pointer",
-  }),
-  singleValue: (base) => ({
-    ...base,
-    color: "#111827",
-  }),
-  input: (base) => ({
-    ...base,
-    color: "#111827",
-  }),
-  placeholder: (base) => ({
-    ...base,
-    color: "#9ca3af",
-  }),
-};
+function getSelectStyles() {
+  const style = getComputedStyle(document.documentElement);
+  const v = (name) => style.getPropertyValue(name).trim();
+  return {
+    control: (base, state) => ({
+      ...base,
+      background: v("--surface"),
+      borderColor: state.isFocused ? v("--text-primary") : v("--border"),
+      boxShadow: "none",
+      color: v("--text-primary"),
+      minWidth: 340,
+      borderRadius: 0,
+      "&:hover": { borderColor: v("--text-primary") },
+    }),
+    menu: (base) => ({
+      ...base,
+      background: v("--surface"),
+      border: `1px solid ${v("--border")}`,
+      borderRadius: 0,
+      boxShadow: "none",
+      marginTop: 0,
+    }),
+    option: (base, state) => ({
+      ...base,
+      background: state.isFocused ? v("--surface-hover") : "transparent",
+      color: v("--text-secondary"),
+      cursor: "pointer",
+    }),
+    singleValue: (base) => ({
+      ...base,
+      color: v("--text-primary"),
+    }),
+    input: (base) => ({
+      ...base,
+      color: v("--text-primary"),
+    }),
+    placeholder: (base) => ({
+      ...base,
+      color: v("--text-placeholder"),
+    }),
+  };
+}
 
 function SalesJournal() {
   const [products, setProducts] = useState([]);
@@ -64,11 +68,15 @@ function SalesJournal() {
   const [newDescription, setNewDescription] = useState("");
   const [newInventory, setNewInventory] = useState("");
 
+  const { theme } = useTheme();
+
   useEffect(() => {
     setProducts(getProducts());
     const savedSales = JSON.parse(localStorage.getItem("sales")) || [];
     setSales(savedSales);
   }, []);
+
+  const selectStyles = useMemo(() => getSelectStyles(), [theme]);
 
   const categories = useMemo(
     () => [...new Set(products.map((p) => p.category))],
@@ -178,10 +186,6 @@ function SalesJournal() {
   return (
     <div className="container">
       <h2>Sales Journal</h2>
-
-      <nav className="nav-links">
-        <Link to="/">Back to Dashboard</Link>
-      </nav>
 
       {/* Form */}
       <div style={{ marginBottom: "20px" }}>
