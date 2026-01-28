@@ -367,7 +367,7 @@ export default function Dashboard() {
                     <th>Period</th>
                     <th>Revenue (฿)</th>
                     <th>Qty</th>
-                    <th>Count</th>
+                    <th>Order Count</th>
                   </tr>
                 </thead>
                 <tbody>

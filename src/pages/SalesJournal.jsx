@@ -68,6 +68,8 @@ function SalesJournal() {
   const [newDescription, setNewDescription] = useState("");
   const [newInventory, setNewInventory] = useState("");
 
+  const [modal, setModal] = useState({ show: false, title: "", message: "" });
+
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -111,7 +113,11 @@ function SalesJournal() {
 
   function handleSaveNewProduct() {
     if (!pendingName.trim() || !newPrice || !newCategoryOption) {
-      alert("Please fill in a product name, category, and unit price");
+      setModal({
+        show: true,
+        title: "Missing Information",
+        message: "Please fill in a product name, category, and unit price.",
+      });
       return;
     }
 
@@ -142,18 +148,30 @@ function SalesJournal() {
         ? { value: categories[0], label: categories[0].replace(/_/g, " ") }
         : null
     );
+
+    setModal({
+      show: true,
+      title: "Product Created",
+      message: `"${newProduct.itemName}" has been added to your products.`,
+    });
   }
 
   const handleAddSale = () => {
     if (!product || !date) {
-      alert("Please select a product and date");
+      setModal({
+        show: true,
+        title: "Missing Information",
+        message: "Please select a product and date.",
+      });
       return;
     }
 
     if (quantity > product.inventory) {
-      alert(
-        `Not enough inventory. "${product.itemName}" only has ${product.inventory} in stock.`
-      );
+      setModal({
+        show: true,
+        title: "Insufficient Stock",
+        message: `Not enough inventory. "${product.itemName}" only has ${product.inventory} in stock.`,
+      });
       return;
     }
 
@@ -177,6 +195,12 @@ function SalesJournal() {
     );
     setProducts(updatedProducts);
     localStorage.setItem("products", JSON.stringify(updatedProducts));
+
+    setModal({
+      show: true,
+      title: "Sale Added",
+      message: `${quantity}x "${product.itemName}" for ฿${totalPrice.toLocaleString()} has been recorded.`,
+    });
 
     setSelectedOption(null);
     setQuantity(1);
@@ -349,6 +373,16 @@ function SalesJournal() {
           ))}
         </tbody>
       </table>
+
+      {modal.show && (
+        <div className="modal-overlay" onClick={() => setModal({ ...modal, show: false })}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>{modal.title}</h3>
+            <p>{modal.message}</p>
+            <button onClick={() => setModal({ ...modal, show: false })}>OK</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
