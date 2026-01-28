@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import CreatableSelect from "react-select/creatable";
 import productsJson from "../data/pos_item.json";
+import "./SalesJournal.css";
 
 function getProducts() {
   const stored = localStorage.getItem("products");
@@ -52,7 +53,7 @@ function SalesJournal() {
 
   const [pendingName, setPendingName] = useState("");
   const [showNewForm, setShowNewForm] = useState(false);
-  const [newCategory, setNewCategory] = useState("");
+  const [newCategoryOption, setNewCategoryOption] = useState(null);
   const [newPrice, setNewPrice] = useState("");
   const [newDescription, setNewDescription] = useState("");
   const [newInventory, setNewInventory] = useState("");
@@ -70,7 +71,7 @@ function SalesJournal() {
 
   const options = products.map((p) => ({
     value: p.itemName,
-    label: `${p.itemName}  —  ${p.category.replace(/_/g, " ")} · ฿${p.unitPrice} · stock: ${p.inventory}`,
+    label: p.itemName,
   }));
 
   const product = selectedOption
@@ -87,18 +88,22 @@ function SalesJournal() {
     setPendingName(inputValue);
     setShowNewForm(true);
     setSelectedOption(null);
-    setNewCategory(categories[0] || "");
+    setNewCategoryOption(
+      categories[0]
+        ? { value: categories[0], label: categories[0].replace(/_/g, " ") }
+        : null
+    );
   }
 
   function handleSaveNewProduct() {
-    if (!pendingName.trim() || !newPrice) {
-      alert("Please fill in a product name and unit price");
+    if (!pendingName.trim() || !newPrice || !newCategoryOption) {
+      alert("Please fill in a product name, category, and unit price");
       return;
     }
 
     const newProduct = {
       itemName: pendingName.trim(),
-      category: newCategory,
+      category: newCategoryOption.value,
       description: newDescription,
       unitPrice: Number(newPrice),
       inventory: Number(newInventory) || 0,
@@ -110,7 +115,7 @@ function SalesJournal() {
 
     setSelectedOption({
       value: newProduct.itemName,
-      label: `${newProduct.itemName}  —  ${newProduct.category.replace(/_/g, " ")} · ฿${newProduct.unitPrice} · stock: ${newProduct.inventory}`,
+      label: newProduct.itemName,
     });
 
     setShowNewForm(false);
@@ -118,7 +123,11 @@ function SalesJournal() {
     setNewPrice("");
     setNewDescription("");
     setNewInventory("");
-    setNewCategory(categories[0] || "");
+    setNewCategoryOption(
+      categories[0]
+        ? { value: categories[0], label: categories[0].replace(/_/g, " ") }
+        : null
+    );
   }
 
   const handleAddSale = () => {
@@ -184,22 +193,41 @@ function SalesJournal() {
           />
         </div>
 
+        {/* Selected product details */}
+        {product && (
+          <div className="product-detail">
+            <span><b>Category:</b> {product.category.replace(/_/g, " ")}</span>
+            <span><b>Unit Price:</b> ฿{product.unitPrice}</span>
+            <span><b>In Stock:</b> {product.inventory}</span>
+          </div>
+        )}
+
         {/* Inline new-product form */}
         {showNewForm && (
           <div className="new-product-form">
             <h4>New Product: {pendingName}</h4>
             <div>
               <label>Category: </label>
-              <select
-                value={newCategory}
-                onChange={(e) => setNewCategory(e.target.value)}
-              >
-                {categories.map((c) => (
-                  <option key={c} value={c}>
-                    {c.replace(/_/g, " ")}
-                  </option>
-                ))}
-              </select>
+              <div className="inline-select">
+                <CreatableSelect
+                  isClearable
+                  options={categories.map((c) => ({
+                    value: c,
+                    label: c.replace(/_/g, " "),
+                  }))}
+                  value={newCategoryOption}
+                  onChange={setNewCategoryOption}
+                  onCreateOption={(input) =>
+                    setNewCategoryOption({
+                      value: input.toLowerCase().replace(/\s+/g, "_"),
+                      label: input,
+                    })
+                  }
+                  placeholder="Select or type new..."
+                  formatCreateLabel={(input) => `+ Add "${input}"`}
+                  styles={selectStyles}
+                />
+              </div>
             </div>
             <div>
               <label>Unit Price (฿): </label>
@@ -242,21 +270,14 @@ function SalesJournal() {
           </div>
         )}
 
-        <div className="qty-row">
-          <div>
-            <label>Quantity: </label>
-            <input
-              type="number"
-              min="1"
-              value={quantity}
-              onChange={(e) => setQuantity(Number(e.target.value))}
-            />
-          </div>
-          {product && (
-            <span className="stock-info">
-              Available stock: {product.inventory}
-            </span>
-          )}
+        <div>
+          <label>Quantity: </label>
+          <input
+            type="number"
+            min="1"
+            value={quantity}
+            onChange={(e) => setQuantity(Number(e.target.value))}
+          />
         </div>
 
         <div>
