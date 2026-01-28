@@ -81,72 +81,139 @@ function Dashboard() {
 
   const modeLabel = mode === "daily" ? "Day" : mode === "weekly" ? "Week Starting" : "Month";
 
+  const salesByProduct = {};
+
+sales.forEach((sale) => {
+  if (!salesByProduct[sale.itemName]) {
+    salesByProduct[sale.itemName] = {
+      itemName: sale.itemName,
+      quantity: 0,
+      total: 0,
+    };
+  }
+
+  salesByProduct[sale.itemName].quantity += sale.quantity;
+  salesByProduct[sale.itemName].total += sale.totalPrice;
+});
+
+  const top5Products = Object.values(salesByProduct)
+    .sort((a, b) => b.quantity - a.quantity)
+    .slice(0, 5);
+
   return (
-    <div className="container">
-      <h2>Dashboard</h2>
+  <div className="container">
+    <h2>Dashboard</h2>
 
-      <nav className="nav-links">
-        <Link to="/sales-journal">Go to Sales Journal</Link>
-      </nav>
+    <nav className="nav-links">
+      <Link to="/sales-journal">Go to Sales Journal</Link>
+    </nav>
 
-      {/* All-time totals */}
-      <div className="summary-cards">
-        <div className="card">
-          <div className="card-label">Total Revenue (All Time)</div>
-          <div className="card-value">฿{allTimeTotal.toLocaleString()}</div>
-        </div>
-        <div className="card">
-          <div className="card-label">Total Transactions</div>
-          <div className="card-value">{sales.length}</div>
-        </div>
-        <div className="card">
-          <div className="card-label">Total Items Sold</div>
-          <div className="card-value">{allTimeQty.toLocaleString()}</div>
-        </div>
+    {/* All-time totals */}
+    <div className="summary-cards">
+      <div className="card">
+        <div className="card-label">Total Revenue (All Time)</div>
+        <div className="card-value">฿{allTimeTotal.toLocaleString()}</div>
       </div>
-
-      {/* Period summary */}
-      <div className="period-section">
-        <h3>Sales Summary by Period</h3>
-        <div className="period-selector">
-          {["daily", "weekly", "monthly"].map((m) => (
-            <button
-              key={m}
-              className={mode === m ? "active" : ""}
-              onClick={() => setMode(m)}
-            >
-              {m.charAt(0).toUpperCase() + m.slice(1)}
-            </button>
-          ))}
-        </div>
-
-        {grouped.length === 0 ? (
-          <p>No sales recorded yet.</p>
-        ) : (
-          <table border="1" cellPadding="8">
-            <thead>
-              <tr>
-                <th>{modeLabel}</th>
-                <th>Transactions</th>
-                <th>Items Sold</th>
-                <th>Total Revenue</th>
-              </tr>
-            </thead>
-            <tbody>
-              {grouped.map((g) => (
-                <tr key={g.period}>
-                  <td>{g.period}</td>
-                  <td>{g.count}</td>
-                  <td>{g.totalQty}</td>
-                  <td>฿{g.totalSales.toLocaleString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+      <div className="card">
+        <div className="card-label">Total Transactions</div>
+        <div className="card-value">{sales.length}</div>
+      </div>
+      <div className="card">
+        <div className="card-label">Total Items Sold</div>
+        <div className="card-value">{allTimeQty.toLocaleString()}</div>
       </div>
     </div>
-  );
+
+    {/* Period summary */}
+    <div className="period-section">
+      <h3>Sales Summary by Period</h3>
+
+      <div className="period-selector">
+        {["daily", "weekly", "monthly"].map((m) => (
+          <button
+            key={m}
+            className={mode === m ? "active" : ""}
+            onClick={() => setMode(m)}
+          >
+            {m.charAt(0).toUpperCase() + m.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      {grouped.length === 0 ? (
+        <p>No sales recorded yet.</p>
+      ) : (
+        <table border="1" cellPadding="8">
+          <thead>
+            <tr>
+              <th>{modeLabel}</th>
+              <th>Transactions</th>
+              <th>Items Sold</th>
+              <th>Total Revenue</th>
+            </tr>
+          </thead>
+          <tbody>
+            {grouped.map((g) => (
+              <tr key={g.period}>
+                <td>{g.period}</td>
+                <td>{g.count}</td>
+                <td>{g.totalQty}</td>
+                <td>฿{g.totalSales.toLocaleString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+
+    {/* Sales by Product */}
+    <h3>Sales by Product</h3>
+
+    <table border="1" cellPadding="8">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Total Quantity</th>
+          <th>Total Sales (฿)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {Object.values(salesByProduct).map((p, index) => (
+          <tr key={index}>
+            <td>{p.itemName}</td>
+            <td>{p.quantity}</td>
+            <td>{p.total.toLocaleString()}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+
+    <h3>Top 5 Selling Items</h3>
+
+    <table border="1" cellPadding="8">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Product</th>
+          <th>Quantity Sold</th>
+          <th>Total Sales (฿)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {top5Products.map((p, index) => (
+          <tr key={index}>
+            <td>{index + 1}</td>
+            <td>{p.itemName}</td>
+            <td>{p.quantity}</td>
+            <td>{p.total.toLocaleString()}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+);
+
+
 }
 
 export default Dashboard;
