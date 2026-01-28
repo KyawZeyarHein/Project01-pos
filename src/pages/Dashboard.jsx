@@ -132,11 +132,13 @@ export default function Dashboard() {
   const salesByProduct = {};
   sales.forEach((s) => {
     if (!salesByProduct[s.itemName]) {
-      salesByProduct[s.itemName] = { itemName: s.itemName, quantity: 0, total: 0 };
+      salesByProduct[s.itemName] = { itemName: s.itemName, category: s.category, quantity: 0, total: 0 };
     }
     salesByProduct[s.itemName].quantity += s.quantity;
     salesByProduct[s.itemName].total += s.totalPrice;
   });
+
+  const productSalesList = Object.values(salesByProduct).sort((a, b) => b.total - a.total);
 
   const top5Products = Object.values(salesByProduct)
     .sort((a, b) => b.quantity - a.quantity)
@@ -161,24 +163,136 @@ export default function Dashboard() {
         <div className="dashboard-subtitle">Overview of your sales performance</div>
       </div>
 
-      <div className="summary-cards">
-        <div className="kpi-card kpi-card--revenue">
-          <div className="card-label">Revenue</div>
-          <div className="card-value">฿{allTimeRevenue.toLocaleString()}</div>
-          <div className="card-subtitle">All time</div>
+      {/* Row 1: KPI cards + Sales by Category pie chart */}
+      <div className="charts-grid">
+        <div className="dashboard-panel">
+          <div className="panel-header">
+            <h3>Sales Overview</h3>
+          </div>
+          <div className="panel-body" style={{ padding: 0 }}>
+            <div className="kpi-list">
+              <div className="kpi-card kpi-card--revenue">
+                <div className="card-label">Revenue</div>
+                <div className="card-value">฿{allTimeRevenue.toLocaleString()}</div>
+                <div className="card-subtitle">All time</div>
+              </div>
+              <div className="kpi-card kpi-card--transactions">
+                <div className="card-label">Transactions</div>
+                <div className="card-value">{sales.length}</div>
+                <div className="card-subtitle">All time</div>
+              </div>
+              <div className="kpi-card kpi-card--items">
+                <div className="card-label">Items Sold</div>
+                <div className="card-value">{allTimeQty}</div>
+                <div className="card-subtitle">All time</div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="kpi-card kpi-card--transactions">
-          <div className="card-label">Transactions</div>
-          <div className="card-value">{sales.length}</div>
-          <div className="card-subtitle">All time</div>
-        </div>
-        <div className="kpi-card kpi-card--items">
-          <div className="card-label">Items Sold</div>
-          <div className="card-value">{allTimeQty}</div>
-          <div className="card-subtitle">All time</div>
+
+        <div className="dashboard-panel">
+          <div className="panel-header">
+            <h3>Sales by Category</h3>
+          </div>
+          <div className="panel-body">
+            <ResponsiveContainer width="100%" height={280}>
+              <PieChart>
+                <Pie
+                  data={pieData}
+                  dataKey="value"
+                  nameKey="name"
+                  outerRadius={90}
+                  innerRadius={55}
+                  paddingAngle={2}
+                >
+                  {pieData.map((_, i) => (
+                    <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip content={<PieTooltip />} />
+                <Legend formatter={(value) => formatCategory(value)} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
 
+      {/* Row 2: Sales by Product + Top 5 Products */}
+      <div className="charts-grid">
+        <div className="dashboard-panel">
+          <div className="panel-header">
+            <h3>Sales by Product</h3>
+          </div>
+          <div className="panel-body" style={{ padding: 0 }}>
+            <div className="summary-table-wrap">
+              <table className="summary-table">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Category</th>
+                    <th>Qty</th>
+                    <th>Revenue (฿)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {productSalesList.map((p) => (
+                    <tr key={p.itemName}>
+                      <td>{p.itemName}</td>
+                      <td>{formatCategory(p.category)}</td>
+                      <td>{p.quantity}</td>
+                      <td>฿{p.total.toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div className="dashboard-panel">
+          <div className="panel-header">
+            <h3>Top 5 Products</h3>
+          </div>
+          <div className="panel-body" style={{ padding: 0 }}>
+            <table className="top5-table">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Product</th>
+                  <th>Qty Sold</th>
+                  <th>Total (฿)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {top5Products.map((p, i) => (
+                  <tr key={i}>
+                    <td>
+                      <span className={`rank-badge rank-badge--${i + 1}`}>
+                        {i + 1}
+                      </span>
+                    </td>
+                    <td>{p.itemName}</td>
+                    <td>
+                      <div className="qty-bar-wrapper">
+                        <span className="qty-bar-value">{p.quantity}</span>
+                        <div className="qty-bar">
+                          <div
+                            className="qty-bar-fill"
+                            style={{ width: `${(p.quantity / maxQty) * 100}%` }}
+                          />
+                        </div>
+                      </div>
+                    </td>
+                    <td>฿{p.total.toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {/* Row 3: Sales Trend + Sales Summary (last) */}
       <div className="charts-grid">
         <div className="dashboard-panel">
           <div className="panel-header">
@@ -261,76 +375,6 @@ export default function Dashboard() {
                 </tbody>
               </table>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="charts-grid">
-        <div className="dashboard-panel">
-          <div className="panel-header">
-            <h3>Sales by Category</h3>
-          </div>
-          <div className="panel-body">
-            <ResponsiveContainer width="100%" height={280}>
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  dataKey="value"
-                  nameKey="name"
-                  outerRadius={90}
-                  innerRadius={55}
-                  paddingAngle={2}
-                >
-                  {pieData.map((_, i) => (
-                    <Cell key={i} fill={COLORS[i % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip content={<PieTooltip />} />
-                <Legend formatter={(value) => formatCategory(value)} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        <div className="dashboard-panel">
-          <div className="panel-header">
-            <h3>Top 5 Products</h3>
-          </div>
-          <div className="panel-body" style={{ padding: 0 }}>
-            <table className="top5-table">
-              <thead>
-                <tr>
-                  <th>Rank</th>
-                  <th>Product</th>
-                  <th>Qty Sold</th>
-                  <th>Total (฿)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {top5Products.map((p, i) => (
-                  <tr key={i}>
-                    <td>
-                      <span className={`rank-badge rank-badge--${i + 1}`}>
-                        {i + 1}
-                      </span>
-                    </td>
-                    <td>{p.itemName}</td>
-                    <td>
-                      <div className="qty-bar-wrapper">
-                        <span className="qty-bar-value">{p.quantity}</span>
-                        <div className="qty-bar">
-                          <div
-                            className="qty-bar-fill"
-                            style={{ width: `${(p.quantity / maxQty) * 100}%` }}
-                          />
-                        </div>
-                      </div>
-                    </td>
-                    <td>฿{p.total.toLocaleString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
           </div>
         </div>
       </div>
