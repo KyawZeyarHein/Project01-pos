@@ -93,6 +93,57 @@ button {
   border-color: #646cff;
 }
 
+/* New product inline form */
+.new-product-form {
+  margin: 12px 0;
+  padding: 16px;
+  background: #1a1a2e;
+  border: 1px solid #444;
+  border-radius: 8px;
+}
+
+.new-product-form h4 {
+  margin: 0 0 12px;
+}
+
+.new-product-form div {
+  margin-bottom: 8px;
+}
+
+.new-product-form label {
+  display: inline-block;
+  width: 120px;
+}
+
+.new-product-form input,
+.new-product-form select {
+  padding: 6px 8px;
+  background: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: #fff;
+}
+
+.new-product-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.new-product-actions button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background: #646cff;
+  color: #fff;
+  cursor: pointer;
+}
+
+.btn-cancel {
+  background: #333 !important;
+  color: #ccc !important;
+}
+
 /* Tables */
 table {
   width: 100%;

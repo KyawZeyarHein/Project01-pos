@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import CreatableSelect from "react-select/creatable";
 import productsJson from "../data/pos_item.json";
 
 function getProducts() {
@@ -9,12 +10,60 @@ function getProducts() {
   return productsJson;
 }
 
+const CATEGORIES = [
+  "stationary",
+  "small_it_gadgets",
+  "snacks",
+  "consumer_products",
+  "simple_medicines",
+];
+
+const selectStyles = {
+  control: (base) => ({
+    ...base,
+    background: "#1a1a1a",
+    borderColor: "#444",
+    color: "#fff",
+    minWidth: 340,
+  }),
+  menu: (base) => ({
+    ...base,
+    background: "#1e1e1e",
+    border: "1px solid #444",
+  }),
+  option: (base, state) => ({
+    ...base,
+    background: state.isFocused ? "#2a2a3a" : "transparent",
+    color: "#fff",
+    cursor: "pointer",
+  }),
+  singleValue: (base) => ({
+    ...base,
+    color: "#fff",
+  }),
+  input: (base) => ({
+    ...base,
+    color: "#fff",
+  }),
+  placeholder: (base) => ({
+    ...base,
+    color: "#888",
+  }),
+};
+
 function SalesJournal() {
   const [products, setProducts] = useState([]);
-  const [selectedItem, setSelectedItem] = useState("");
+  const [selectedOption, setSelectedOption] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [date, setDate] = useState("");
   const [sales, setSales] = useState([]);
+
+  // New product form
+  const [pendingName, setPendingName] = useState("");
+  const [showNewForm, setShowNewForm] = useState(false);
+  const [newCategory, setNewCategory] = useState(CATEGORIES[0]);
+  const [newPrice, setNewPrice] = useState("");
+  const [newDescription, setNewDescription] = useState("");
 
   useEffect(() => {
     setProducts(getProducts());
@@ -22,12 +71,60 @@ function SalesJournal() {
     setSales(savedSales);
   }, []);
 
-  const product = products.find(p => p.itemName === selectedItem);
+  const options = products.map((p) => ({
+    value: p.itemName,
+    label: `${p.itemName}  —  ${p.category.replace(/_/g, " ")} · ฿${p.unitPrice}`,
+  }));
+
+  const product = selectedOption
+    ? products.find((p) => p.itemName === selectedOption.value)
+    : null;
   const totalPrice = product ? product.unitPrice * quantity : 0;
 
+  function handleSelectChange(option) {
+    setSelectedOption(option);
+    setShowNewForm(false);
+  }
+
+  function handleCreate(inputValue) {
+    setPendingName(inputValue);
+    setShowNewForm(true);
+    setSelectedOption(null);
+  }
+
+  function handleSaveNewProduct() {
+    if (!pendingName.trim() || !newPrice) {
+      alert("Please fill in a product name and unit price");
+      return;
+    }
+
+    const newProduct = {
+      itemName: pendingName.trim(),
+      category: newCategory,
+      description: newDescription,
+      unitPrice: Number(newPrice),
+      inventory: 0,
+    };
+
+    const updated = [...products, newProduct];
+    setProducts(updated);
+    localStorage.setItem("products", JSON.stringify(updated));
+
+    setSelectedOption({
+      value: newProduct.itemName,
+      label: `${newProduct.itemName}  —  ${newProduct.category.replace(/_/g, " ")} · ฿${newProduct.unitPrice}`,
+    });
+
+    setShowNewForm(false);
+    setPendingName("");
+    setNewPrice("");
+    setNewDescription("");
+    setNewCategory(CATEGORIES[0]);
+  }
+
   const handleAddSale = () => {
-    if (!selectedItem || !date) {
-      alert("Please select product and date");
+    if (!product || !date) {
+      alert("Please select a product and date");
       return;
     }
 
@@ -37,15 +134,14 @@ function SalesJournal() {
       unitPrice: product.unitPrice,
       quantity,
       totalPrice,
-      date
+      date,
     };
 
     const updatedSales = [...sales, newSale];
     setSales(updatedSales);
     localStorage.setItem("sales", JSON.stringify(updatedSales));
 
-    // reset form
-    setSelectedItem("");
+    setSelectedOption(null);
     setQuantity(1);
     setDate("");
   };
@@ -62,18 +158,66 @@ function SalesJournal() {
       <div style={{ marginBottom: "20px" }}>
         <div>
           <label>Product: </label>
-          <select
-            value={selectedItem}
-            onChange={(e) => setSelectedItem(e.target.value)}
-          >
-            <option value="">Select product</option>
-            {products.map((p, index) => (
-              <option key={index} value={p.itemName}>
-                {p.itemName}
-              </option>
-            ))}
-          </select>
+          <CreatableSelect
+            isClearable
+            options={options}
+            value={selectedOption}
+            onChange={handleSelectChange}
+            onCreateOption={handleCreate}
+            placeholder="Search or create a product..."
+            formatCreateLabel={(input) => `+ Create "${input}"`}
+            styles={selectStyles}
+          />
         </div>
+
+        {/* Inline new-product form */}
+        {showNewForm && (
+          <div className="new-product-form">
+            <h4>New Product: {pendingName}</h4>
+            <div>
+              <label>Category: </label>
+              <select
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
+              >
+                {CATEGORIES.map((c) => (
+                  <option key={c} value={c}>
+                    {c.replace(/_/g, " ")}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label>Unit Price (฿): </label>
+              <input
+                type="number"
+                min="0"
+                value={newPrice}
+                onChange={(e) => setNewPrice(e.target.value)}
+              />
+            </div>
+            <div>
+              <label>Description: </label>
+              <input
+                type="text"
+                value={newDescription}
+                onChange={(e) => setNewDescription(e.target.value)}
+              />
+            </div>
+            <div className="new-product-actions">
+              <button onClick={handleSaveNewProduct}>Save Product</button>
+              <button
+                onClick={() => {
+                  setShowNewForm(false);
+                  setPendingName("");
+                }}
+                className="btn-cancel"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
 
         <div>
           <label>Quantity: </label>
@@ -94,7 +238,9 @@ function SalesJournal() {
           />
         </div>
 
-        <p><b>Total Price:</b> ฿{totalPrice}</p>
+        <p>
+          <b>Total Price:</b> ฿{totalPrice}
+        </p>
 
         <button onClick={handleAddSale}>Add Sale</button>
       </div>
