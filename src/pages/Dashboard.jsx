@@ -40,6 +40,7 @@ const seedSales = [
 function getSales() {
   const stored = localStorage.getItem("sales");
   if (!stored) {
+    return null
     localStorage.setItem("sales", JSON.stringify(seedSales));
     return seedSales;
   }
