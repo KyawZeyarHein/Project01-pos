@@ -55,7 +55,14 @@ The application includes a light mode and dark mode toggle to improve user exper
 ### Dark Mode
 ![Dark Mode](screenshots/dark-mode.png)
 
-## Pages
-- Sales Journal
-- Dashboard
+## Technology Used
+
+| Category           | Technology           | Description                          |
+|--------------------|----------------------|--------------------------------------|
+| Main Framework     | React                | Frontend UI framework                |
+| Routing Library    | react-router-dom     | Client-side page routing             |
+| Chart Library      | Recharts             | Charts and data visualization        |
+| UI Utility Library | react-select         | Input searchable dropdown components |
+| Package Manager    | npm                  | Dependency and package management    |
+
 
