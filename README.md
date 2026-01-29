@@ -2,13 +2,13 @@
 
 ## Technology Used
 
-| Category           | Technology           | Description                          |
-|--------------------|----------------------|--------------------------------------|
-| Main Framework     | React                | Frontend UI framework                |
-| Routing Library    | react-router-dom     | Client-side page routing             |
-| Chart Library      | Recharts             | Charts and data visualization        |
-| UI Utility Library | react-select         | Input searchable dropdown components |
-| Package Manager    | npm                  | Dependency and package management    |
+| Category           | Technology           |
+|--------------------|----------------------|
+| Main Framework     | React                |
+| Routing Library    | react-router-dom     | 
+| Chart Library      | Recharts             | 
+| UI Utility Library | react-select         | 
+| Package Manager    | npm                  | 
 
 ## Group Members
 - Kyaw Zeyar Hein 
