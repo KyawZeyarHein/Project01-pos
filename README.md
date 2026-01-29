@@ -11,8 +11,8 @@
 | Package Manager    | npm                  | Dependency and package management    |
 
 ## Group Members
-- Kyaw Zeyar Hein 6632106
-- Min Khaung Kyaw Swar 6712164
+- Kyaw Zeyar Hein 
+- Min Khaung Kyaw Swar 
 
 ## Deployment
 GitHub Pages link: https://kyawzeyarhein.github.io/pos-project01/
