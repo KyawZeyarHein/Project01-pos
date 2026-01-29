@@ -1,7 +1,6 @@
 # Project 01: Ba POS (Updated)
 
 ## Technology Used
-
 | Category           | Technology           |
 |--------------------|----------------------|
 | Main Framework     | React                |
@@ -14,18 +13,16 @@
 - Kyaw Zeyar Hein 
 - Min Khaung Kyaw Swar 
 
-## Deployment
-GitHub Pages link: https://kyawzeyarhein.github.io/pos-project01/
-
 Overview
+This project is a Point of Sale (POS) web application developed using React. It allows users to record sales transactions, manage product sales, and analyze sales performance through clear summaries, tables, and interactive charts.
 
-This project is a Point of Sale (POS) web application developed using React.
-The system allows users to record sales transactions, view transaction history, and analyze sales performance through visual summaries and charts.
+The application features a dashboard that displays total revenue, number of transactions, and total items sold. It also includes sales trend analysis (daily, weekly, and monthly), sales by category with multiple chart views (pie, bar, and horizontal bar), and a top-selling products list.
 
-The application uses LocalStorage to store sales data and does not require a backend server or database.
+A Sales Journal page is provided for adding and viewing transactions, where users can select products, enter quantities, choose dates, and automatically calculate totals. All sales data is stored using browser LocalStorage, so no backend server or database is required.
+
+The system also includes a light mode and dark mode toggle to improve usability and readability.
 
 Features
-
 --Dashboard
 
 The Dashboard provides an overview of sales performance and analytics.
