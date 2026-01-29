@@ -1,5 +1,15 @@
 # Project 01: Ba POS (Updated)
 
+## Technology Used
+
+| Category           | Technology           | Description                          |
+|--------------------|----------------------|--------------------------------------|
+| Main Framework     | React                | Frontend UI framework                |
+| Routing Library    | react-router-dom     | Client-side page routing             |
+| Chart Library      | Recharts             | Charts and data visualization        |
+| UI Utility Library | react-select         | Input searchable dropdown components |
+| Package Manager    | npm                  | Dependency and package management    |
+
 ## Group Members
 - Kyaw Zeyar Hein 6632106
 - Min Khaung Kyaw Swar 6712164
@@ -54,15 +64,5 @@ Daily sales summary showing revenue, quantity, and order count
 The application includes a light mode and dark mode toggle to improve user experience and readability.
 ### Dark Mode
 ![Dark Mode](screenshots/dark-mode.png)
-
-## Technology Used
-
-| Category           | Technology           | Description                          |
-|--------------------|----------------------|--------------------------------------|
-| Main Framework     | React                | Frontend UI framework                |
-| Routing Library    | react-router-dom     | Client-side page routing             |
-| Chart Library      | Recharts             | Charts and data visualization        |
-| UI Utility Library | react-select         | Input searchable dropdown components |
-| Package Manager    | npm                  | Dependency and package management    |
 
 
