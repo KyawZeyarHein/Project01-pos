@@ -1,13 +1,37 @@
-# Project 01: Ba POS
+# Project 01: Ba POS (Updated)
 
-This is a POS (Point of Sale) web application built using React.
-The application uses LocalStorage to store sales data.
+Overview
 
-## Features
-- Record sales by selecting product, quantity, and date
-- Automatically calculate total price
-- Display all sales transactions
-- Data stored using LocalStorage
+This project is a Point of Sale (POS) web application developed using React.
+The system allows users to record sales transactions, view transaction history, and analyze sales performance through visual summaries and charts.
+
+The application uses LocalStorage to store sales data and does not require a backend server or database.
+
+The application uses LocalStorage to store data, so no backend or database is required.
+
+Features
+--Sales 
+
+The Sales Journal page allows users to record sales transactions by selecting a product, entering quantity, and choosing a date.
+The system automatically calculates the total price for each transaction.
+
+All recorded transactions are displayed in a table that includes:Date, Product, Category, Quantity, Unit Price and Total Amount
+
+--Dashboard
+
+The Dashboard provides an overview of sales performance and analytics.
+It displays summary information such as total revenue, number of transactions, and total items sold.
+
+The dashboard also includes:
+Sales by category displayed as a chart
+Sales trends shown by day, week, or month
+Sales by product table
+Top 5 best-selling products
+Daily sales summary showing revenue, quantity, and order count
+
+--Dark Mode
+
+The application includes a light mode and dark mode toggle to improve user experience and readability.
 
 ## Pages
 - Sales Journal
