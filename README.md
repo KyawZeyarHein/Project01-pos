@@ -1,7 +1,7 @@
-# Project 01: Basic POS (Point of Sale)
+# Project 01: Ba POS
 
-This is a simple POS (Point of Sale) web application built using React.
-The application uses LocalStorage to store sales data and does not use any backend.
+This is a POS (Point of Sale) web application built using React.
+The application uses LocalStorage to store sales data.
 
 ## Features
 - Record sales by selecting product, quantity, and date
@@ -14,11 +14,21 @@ The application uses LocalStorage to store sales data and does not use any backe
 - Dashboard
 
 ## Screenshots
-(Add screenshots here)
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
+![Dashboard](screenshots/dashboard-2.png)
+
+### Sales Journal
+![Sales Journal](screenshots/sales-journal.png)
+
+### Dark Mode
+![Dark Mode](screenshots/dark-mode.png)
+
+
 
 ## Group Members
-- Kyaw Zeyar Hein
-- Min Khaung Kyaw Swar
+- Kyaw Zeyar Hein 6632106
+- Min Khaung Kyaw Swar 6712164
 
 ## Deployment
 GitHub Pages link: https://kyawzeyarhein.github.io/pos-project01/
