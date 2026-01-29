@@ -56,6 +56,7 @@ function startOfWeek(dateStr) {
 
 function groupSales(sales, mode) {
   const groups = {};
+  if (!sales) return [];
   sales.forEach((s) => {
     const key =
       mode === "daily"
@@ -125,7 +126,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     getProducts();
-    setSales(getSales());
+    setSales(getSales() || []);
   }, []);
 
   const grouped = useMemo(() => groupSales(sales, mode), [sales, mode]);
