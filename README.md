@@ -38,7 +38,17 @@ The application includes a light mode and dark mode toggle to improve user exper
 ## Screenshots
 ### Dashboard
 ![Dashboard](screenshots/dashboard.png)
-![Dashboard](screenshots/dashboard-2.png)
+![Dashboard2](screenshots/dashboard-2.png)
+
+### Sales Trend
+![salestrenddaily](screenshots/salestrend-daily.png)
+![salestrendweekly](screenshots/salestrend-weekly.png)
+![salestrendmonthly](screenshots/salestrend-monthly.png)
+
+### Sales Category
+![salescategory](screenshots/salescategory-pie.png)
+![salescategorybar](screenshots/salescategory-bar.png)
+![salescategoryhbar](screenshots/salescategory-hbar.png)
 
 ### Sales Journal
 ![Sales Journal](screenshots/sales-journal.png)
