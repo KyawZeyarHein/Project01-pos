@@ -11,6 +11,21 @@ function getProducts() {
   return productsJson;
 }
 
+function getCustomCategories() {
+  const stored = localStorage.getItem("customCategories");
+  return stored ? JSON.parse(stored) : [];
+}
+
+function saveCustomCategory(category) {
+  const existing = getCustomCategories();
+  if (!existing.includes(category)) {
+    const updated = [...existing, category];
+    localStorage.setItem("customCategories", JSON.stringify(updated));
+    return updated;
+  }
+  return existing;
+}
+
 function getSelectStyles() {
   const style = getComputedStyle(document.documentElement);
   const v = (name) => style.getPropertyValue(name).trim();
@@ -69,6 +84,8 @@ function SalesJournal() {
   const [newInventory, setNewInventory] = useState("");
 
   const [modal, setModal] = useState({ show: false, title: "", message: "" });
+  const [customCategories, setCustomCategories] = useState([]);
+  const [sortOrder, setSortOrder] = useState("desc");
 
   const { theme } = useTheme();
 
@@ -78,6 +95,7 @@ function SalesJournal() {
     setProducts(getProducts());
     const savedSales = JSON.parse(localStorage.getItem("sales")) || [];
     setSales(savedSales);
+    setCustomCategories(getCustomCategories());
   }, []);
 
   useEffect(() => {
@@ -88,9 +106,17 @@ function SalesJournal() {
   }, [theme]);
 
   const categories = useMemo(
-    () => [...new Set(products.map((p) => p.category))],
-    [products]
+    () => [...new Set([...products.map((p) => p.category), ...customCategories])],
+    [products, customCategories]
   );
+
+  const sortedSales = useMemo(() => {
+    return [...sales].sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+    });
+  }, [sales, sortOrder]);
 
   const options = products.map((p) => ({
     value: p.itemName,
@@ -249,12 +275,15 @@ function SalesJournal() {
                   }))}
                   value={newCategoryOption}
                   onChange={setNewCategoryOption}
-                  onCreateOption={(input) =>
+                  onCreateOption={(input) => {
+                    const categoryValue = input.toLowerCase().replace(/\s+/g, "_");
+                    const updated = saveCustomCategory(categoryValue);
+                    setCustomCategories(updated);
                     setNewCategoryOption({
-                      value: input.toLowerCase().replace(/\s+/g, "_"),
+                      value: categoryValue,
                       label: input,
-                    })
-                  }
+                    });
+                  }}
                   placeholder="Select or type new..."
                   formatCreateLabel={(input) => `+ Add "${input}"`}
                   styles={selectStyles}
@@ -355,7 +384,24 @@ function SalesJournal() {
       </div>
 
       {/* Table */}
-      <h3>All Transactions</h3>
+      <div className="transactions-header">
+        <h3>All Transactions</h3>
+        <div className="sort-buttons">
+          <span>Sort by date:</span>
+          <button
+            className={sortOrder === "desc" ? "active" : ""}
+            onClick={() => setSortOrder("desc")}
+          >
+            Newest First
+          </button>
+          <button
+            className={sortOrder === "asc" ? "active" : ""}
+            onClick={() => setSortOrder("asc")}
+          >
+            Oldest First
+          </button>
+        </div>
+      </div>
       <table className="transactions-table">
         <thead>
           <tr>
@@ -368,7 +414,7 @@ function SalesJournal() {
           </tr>
         </thead>
         <tbody>
-          {sales.map((s, index) => (
+          {sortedSales.map((s, index) => (
             <tr key={index}>
               <td>{s.date}</td>
               <td>{s.itemName}</td>
