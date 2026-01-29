@@ -7,8 +7,6 @@ The system allows users to record sales transactions, view transaction history, 
 
 The application uses LocalStorage to store sales data and does not require a backend server or database.
 
-The application uses LocalStorage to store data, so no backend or database is required.
-
 Features
 --Sales 
 
