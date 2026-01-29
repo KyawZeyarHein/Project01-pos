@@ -1,5 +1,12 @@
 # Project 01: Ba POS (Updated)
 
+## Group Members
+- Kyaw Zeyar Hein 6632106
+- Min Khaung Kyaw Swar 6712164
+
+## Deployment
+GitHub Pages link: https://kyawzeyarhein.github.io/pos-project01/
+
 Overview
 
 This project is a Point of Sale (POS) web application developed using React.
@@ -14,32 +21,6 @@ The Sales Journal page allows users to record sales transactions by selecting a 
 The system automatically calculates the total price for each transaction.
 
 All recorded transactions are displayed in a table that includes:Date, Product, Category, Quantity, Unit Price and Total Amount
-
---Dashboard
-
-The Dashboard provides an overview of sales performance and analytics.
-It displays summary information such as total revenue, number of transactions, and total items sold.
-
-The dashboard also includes:
-Sales by category displayed as a chart
-Sales trends shown by day, week, or month
-Sales by product table
-Top 5 best-selling products
-Daily sales summary showing revenue, quantity, and order count
-
---Dark Mode
-
-The application includes a light mode and dark mode toggle to improve user experience and readability.
-
-## Pages
-- Sales Journal
-- Dashboard
-
-## Screenshots
-### Dashboard
-![Dashboard](screenshots/dashboard.png)
-![Dashboard2](screenshots/dashboard-2.png)
-
 ### Sales Trend
 ![salestrenddaily](screenshots/salestrend-daily.png)
 ![salestrendweekly](screenshots/salestrend-weekly.png)
@@ -53,14 +34,28 @@ The application includes a light mode and dark mode toggle to improve user exper
 ### Sales Journal
 ![Sales Journal](screenshots/sales-journal.png)
 
+--Dashboard
+
+The Dashboard provides an overview of sales performance and analytics.
+It displays summary information such as total revenue, number of transactions, and total items sold.
+
+The dashboard also includes:
+Sales by category displayed as a chart
+Sales trends shown by day, week, or month
+Sales by product table
+Top 5 best-selling products
+Daily sales summary showing revenue, quantity, and order count
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
+![Dashboard2](screenshots/dashboard-2.png)
+
+--Dark Mode
+
+The application includes a light mode and dark mode toggle to improve user experience and readability.
 ### Dark Mode
 ![Dark Mode](screenshots/dark-mode.png)
 
+## Pages
+- Sales Journal
+- Dashboard
 
-
-## Group Members
-- Kyaw Zeyar Hein 6632106
-- Min Khaung Kyaw Swar 6712164
-
-## Deployment
-GitHub Pages link: https://kyawzeyarhein.github.io/pos-project01/
