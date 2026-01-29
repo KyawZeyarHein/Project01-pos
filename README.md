@@ -25,6 +25,22 @@ The system allows users to record sales transactions, view transaction history, 
 The application uses LocalStorage to store sales data and does not require a backend server or database.
 
 Features
+
+--Dashboard
+
+The Dashboard provides an overview of sales performance and analytics.
+It displays summary information such as total revenue, number of transactions, and total items sold.
+
+The dashboard also includes:
+Sales by category displayed as a chart
+Sales trends shown by day, week, or month
+Sales by product table
+Top 5 best-selling products
+Daily sales summary showing revenue, quantity, and order count
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
+![Dashboard2](screenshots/dashboard-2.png)
+
 --Sales 
 
 The Sales Journal page allows users to record sales transactions by selecting a product, entering quantity, and choosing a date.
@@ -43,21 +59,6 @@ All recorded transactions are displayed in a table that includes:Date, Product, 
 
 ### Sales Journal
 ![Sales Journal](screenshots/sales-journal.png)
-
---Dashboard
-
-The Dashboard provides an overview of sales performance and analytics.
-It displays summary information such as total revenue, number of transactions, and total items sold.
-
-The dashboard also includes:
-Sales by category displayed as a chart
-Sales trends shown by day, week, or month
-Sales by product table
-Top 5 best-selling products
-Daily sales summary showing revenue, quantity, and order count
-### Dashboard
-![Dashboard](screenshots/dashboard.png)
-![Dashboard2](screenshots/dashboard-2.png)
 
 --Dark Mode
 
