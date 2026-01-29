@@ -37,24 +37,24 @@ The application includes a light mode and dark mode toggle to improve user exper
 
 ## Screenshots
 ### Dashboard
-![Dashboard](pos-project01/screenshots/dashboard.png)
-![Dashboard2](pos-project01/screenshots/dashboard-2.png)
+![Dashboard](screenshots/dashboard.png)
+![Dashboard2](screenshots/dashboard-2.png)
 
 ### Sales Trend
-![salestrenddaily](pos-project01/screenshots/salestrend-daily.png)
-![salestrendweekly](pos-project01/screenshots/salestrend-weekly.png)
-![salestrendmonthly](pos-project01/screenshots/salestrend-monthly.png)
+![salestrenddaily](screenshots/salestrend-daily.png)
+![salestrendweekly](screenshots/salestrend-weekly.png)
+![salestrendmonthly](screenshots/salestrend-monthly.png)
 
 ### Sales Category
-![salescategory](pos-project01/screenshots/salescategory-pie.png)
-![salescategorybar](pos-project01/screenshots/salescategory-bar.png)
-![salescategoryhbar](pos-project01/screenshots/salescategory-hbar.png)
+![salescategory](screenshots/salescategory-pie.png)
+![salescategorybar](screenshots/salescategory-bar.png)
+![salescategoryhbar](screenshots/salescategory-hbar.png)
 
 ### Sales Journal
-![Sales Journal](pos-project01/screenshots/sales-journal.png)
+![Sales Journal](screenshots/sales-journal.png)
 
 ### Dark Mode
-![Dark Mode](pos-project01/screenshots/dark-mode.png)
+![Dark Mode](screenshots/dark-mode.png)
 
 
 
