@@ -96,13 +96,15 @@
   padding: 20px;
 }
 
-.panel-header .period-selector {
+.panel-header .period-selector,
+.panel-header .chart-type-toggle {
   display: flex;
   gap: 4px;
   margin: 0;
 }
 
-.panel-header .period-selector button {
+.panel-header .period-selector button,
+.panel-header .chart-type-toggle button {
   padding: 5px 14px;
   border: 1px solid var(--border);
   border-radius: 0;
@@ -115,17 +117,18 @@
   margin: 0;
 }
 
-.panel-header .period-selector button.active {
+.panel-header .period-selector button.active,
+.panel-header .chart-type-toggle button.active {
   background: var(--accent);
   color: var(--accent-text);
   border-color: var(--accent);
 }
 
-.panel-header .period-selector button:hover:not(.active) {
+.panel-header .period-selector button:hover:not(.active),
+.panel-header .chart-type-toggle button:hover:not(.active) {
   border-color: var(--text-primary);
   color: var(--text-primary);
 }
-
 .custom-tooltip {
   background: var(--surface);
   border: 1px solid var(--border);

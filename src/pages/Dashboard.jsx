@@ -3,6 +3,8 @@ import productsJson from "../data/pos_item.json";
 import {
   AreaChart,
   Area,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -118,6 +120,7 @@ function DonutCenterLabel({ viewBox, total }) {
 export default function Dashboard() {
   const [sales, setSales] = useState([]);
   const [mode, setMode] = useState("daily");
+  const [categoryChartType, setCategoryChartType] = useState("pie");
 
   useEffect(() => {
     getProducts();
@@ -191,38 +194,84 @@ export default function Dashboard() {
         <div className="dashboard-panel">
           <div className="panel-header">
             <h3>Sales by Category</h3>
+            <div className="chart-type-toggle">
+              <button
+                onClick={() => setCategoryChartType("pie")}
+                className={categoryChartType === "pie" ? "active" : ""}
+              >
+                Pie
+              </button>
+              <button
+                onClick={() => setCategoryChartType("bar")}
+                className={categoryChartType === "bar" ? "active" : ""}
+              >
+                Bar
+              </button>
+              <button
+                onClick={() => setCategoryChartType("bar-h")}
+                className={categoryChartType === "bar-h" ? "active" : ""}
+              >
+                Bar-H
+              </button>
+            </div>
           </div>
           <div className="panel-body">
             <ResponsiveContainer width="100%" height={280}>
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  dataKey="value"
-                  nameKey="name"
-                  outerRadius={90}
-                  innerRadius={55}
-                  paddingAngle={2}
-                  cornerRadius={4}
-                  startAngle={90}
-                  endAngle={-270}
-                  animationDuration={800}
-                  animationEasing="ease-out"
-                  label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
-                  labelLine={false}
-                >
-                  {pieData.map((_, i) => (
-                    <Cell key={i} fill={COLORS[i % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip content={<PieTooltip />} />
-                <Legend
-                  formatter={(value) => formatCategory(value)}
-                  layout="vertical"
-                  align="right"
-                  verticalAlign="middle"
-                  iconType="circle"
-                />
-              </PieChart>
+              {categoryChartType === "pie" ? (
+                <PieChart>
+                  <Pie
+                    data={pieData}
+                    dataKey="value"
+                    nameKey="name"
+                    outerRadius={90}
+                    innerRadius={55}
+                    paddingAngle={2}
+                    cornerRadius={4}
+                    startAngle={90}
+                    endAngle={-270}
+                    animationDuration={800}
+                    animationEasing="ease-out"
+                    label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+                    labelLine={false}
+                  >
+                    {pieData.map((_, i) => (
+                      <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<PieTooltip />} />
+                  <Legend
+                    formatter={(value) => formatCategory(value)}
+                    layout="vertical"
+                    align="right"
+                    verticalAlign="middle"
+                    iconType="circle"
+                  />
+                </PieChart>
+              ) : categoryChartType === "bar" ? (
+                <BarChart data={pieData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border-light)" vertical={false} />
+                  <XAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} tickFormatter={(value) => formatCategory(value)} interval={0} />
+                  <YAxis type="number" tick={{ fontSize: 12, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} tickFormatter={(v) => `฿${v}`} />
+                  <Tooltip content={<PieTooltip />} />
+                  <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                    {pieData.map((_, i) => (
+                      <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              ) : (
+                <BarChart data={pieData} layout="vertical">
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border-light)" horizontal={false} />
+                  <XAxis type="number" tick={{ fontSize: 12, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} tickFormatter={(v) => `฿${v}`} />
+                  <YAxis type="category" dataKey="name" tick={{ fontSize: 12, fill: "var(--text-muted)" }} axisLine={false} tickLine={false} tickFormatter={(value) => formatCategory(value)} width={100} />
+                  <Tooltip content={<PieTooltip />} />
+                  <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+                    {pieData.map((_, i) => (
+                      <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              )}
             </ResponsiveContainer>
           </div>
         </div>
