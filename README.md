@@ -21,8 +21,7 @@ A Sales Journal page is provided for adding and viewing transactions, where user
 
 The system also includes a light mode and dark mode toggle to improve usability and readability.
 
-Features
---Dashboard
+Features--Dashboard
 
 The Dashboard provides an overview of sales performance and analytics.
 It displays summary information such as total revenue, number of transactions, and total items sold.
@@ -37,7 +36,7 @@ Daily sales summary showing revenue, quantity, and order count
 ![Dashboard](screenshots/dashboard.png)
 ![Dashboard2](screenshots/dashboard-2.png)
 
---Sales 
+Features--Sales 
 
 The Sales Journal page allows users to record sales transactions by selecting a product, entering quantity, and choosing a date.
 The system automatically calculates the total price for each transaction.
@@ -56,7 +55,7 @@ All recorded transactions are displayed in a table that includes:Date, Product, 
 ### Sales Journal
 ![Sales Journal](screenshots/sales-journal.png)
 
---Dark Mode
+Features--Dark Mode
 
 The application includes a light mode and dark mode toggle to improve user experience and readability.
 ### Dark Mode
