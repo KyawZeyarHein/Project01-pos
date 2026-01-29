@@ -81,13 +81,22 @@ Top 5 best-selling products of all time.
 
 ### Sales Trend
 Sales trends displayed by **day**, **week**, or **month**.  
+#### Daily
 ![Sales Trend Daily](screenshots/salestrend-daily.png)  
+#### Weekly
 ![Sales Trend Weekly](screenshots/salestrend-weekly.png)  
+#### Monthly
 ![Sales Trend Monthly](screenshots/salestrend-monthly.png)
 
 ### Daily Sales Summary
 Daily summary showing revenue, quantity, and order count (by day/week/month).  
 The toggle for this is tied to the Sales Trend selection.
+#### Daily
+![Sales Summary Daily](screenshots/daily-ss.png)  
+#### Weekly
+![Sales Summary Weekly](screenshots/w-ss.png)  
+#### Monthly
+![Sales Summary Monthly](screenshots/m-ss.png)
 
 ---
 
