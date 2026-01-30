@@ -17,8 +17,8 @@ GitHub Pages: https://kyawzeyarhein.github.io/pos-project01/
 ---
 
 ## Group Members
-- #### Kyaw Zeyar Hein  
-- #### Min Khaung Kyaw Swar  
+- #### Kyaw Zeyar Hein  6632106
+- #### Min Khaung Kyaw Swar 6712164
 
 ---
 
